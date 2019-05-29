@@ -103,3 +103,30 @@
 //
 //
 //
+//////코드 20.7 KMP 알고리즘의 다른 구현
+//
+//vector<int> kmpSearch2(const string& H, const string& N) {
+//	int n = H.size(), m = N.size();
+//	vector<int> ret;
+//	vector<int> pi = getPartialMatch(N);
+//	//현재 대응된 글자의 수
+//	int matched = 0;
+//	//짚더미의 각 글자를 순회한다.
+//	for (int i = 0; i < n; i++) {
+//		//matched번 글자와 짚더미의 해당 글자가 불일치할 경우,
+//		//현재 대응된 글자의 수를 pi[matched-1]로 줄인다.
+//		while (matched > 0 && H[i] != N[matched])
+//			matched = pi[matched - 1];
+//		//글자가 대응될 경우
+//		if (H[i] == N[matched - 1]) {
+//			matched++;
+//			if (matched == m) {
+//				ret.push_back(i - m + 1);
+//				matched = pi[matched - 1];
+//			}
+//		}
+//	}
+//	return ret;
+//}
+//
+//
