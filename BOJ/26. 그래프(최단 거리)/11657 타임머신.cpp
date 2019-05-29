@@ -1,11 +1,13 @@
 #include<iostream>
 #include<vector>
+#include<algorithm>
 
 using namespace std;
 
 const int MAX_N = 501;
 const int INF = 1000000007;
 
+int edge[501][501];
 vector<pair<int, int> > adj[MAX_N];
 
 void bellmanFord(int src, int N) {
@@ -16,6 +18,8 @@ void bellmanFord(int src, int N) {
 	for (int iter = 1; iter <= N; iter++) {
 		updated = false;
 		for (int here = 1; here <= N; here++) {
+			if (upper[here] == INF)
+				continue;
 			for (int i = 0; i < adj[here].size(); i++) {
 				int there = adj[here][i].first;
 				int cost = adj[here][i].second;
@@ -46,10 +50,27 @@ int main() {
 	int N, M;
 	int A, B, cost;
 	cin >> N >> M;
+
+	for (int i = 1; i <= N; i++)
+		for (int j = 1; j <= N; j++)
+			edge[i][j] = INF;
+
+		
+
+	
+
 	for (int i = 0; i < M; i++) {
 		cin >> A >> B >> cost;
+		edge[A][B] = min(edge[A][B], cost);
 		adj[A].push_back({ B,cost });
 	}
+
+	for (int i = 1; i <= N; i++)
+		for (int j = 1; j <= N; j++)
+			if (edge[i][j] < INF)
+				adj[i].push_back({ j, edge[i][j] });
+
+
 	bellmanFord(1, N);
 
 	return 0;
