@@ -1,115 +1,11 @@
-//#include<iostream>
-//#include<vector>
-//#include<string>
-//#include<algorithm>
-//#include<cstring>		//stacmp()를 사용하기 위해서
-//
-//using namespace std;
-//
-////코드 20.8 접미사 배열을 계산하는 단순한 알고리즘
-//
-////두 접미사의 시작 위치 i,j가 주어질 때 두 접미사 중 어느 쪽이 앞에 와야 할지 비교한다.
-//struct SuffixComparator {
-//	const string & s;
-//	SuffixComparator(const string& s) : s(s) {}
-//	bool operator () (int i, int j) {
-//		//s.substr() 대신에 strcmp()를 쓰면 임시 객체를 만드는 비용이 절약된다.
-//		//strcmp(시작문자 위치, 길이) = [시작문자, 시작문자 + count) 가 반환된다.
-//		//s.c_str()은 처음 문자 위치를 포인터로 나타낸다.
-//		return strcmp(s.c_str() + i, s.c_str() + j) < 0;
-//	}
-//};
-//
-////s의 접미사 배열을 계산한다.
-//vector<int> getSuffixArrayNaive(const string& s) {
-//	//접미사 시작 위치를 담은 배열을 만든다.
-//	vector<int> perm;
-//	for (int i = 0; i < s.size(); i++)
-//		perm.push_back(i);
-//	//접미사를 비교하는 비교자를 이용해 정렬하면 완성!
-//	sort(perm.begin(), perm.end(), SuffixComparator(s));
-//	return perm;
-//}
-//
-//vector<int> KMP(const string &s) {
-//	int N = s.size();
-//	vector<int> pi(N, 0);
-//	int begin = 1, matched = 0;
-//	while (begin + matched < N) {
-//		if (s[begin + matched] == s[matched]) {
-//			matched++;
-//			pi[begin + matched - 1] = matched;
-//		}
-//		else {
-//			if (matched == 0)
-//				begin++;
-//			else {
-//				begin += pi[matched - 1];
-//				matched = pi[matched];
-//			}
-//		}
-//	}
-//	return pi;
-//}
-//
-//int preKMP(const string &s, int start) {
-//	int N = s.size();
-//	int ret = 0;
-//	vector<int> pi(N, 0);
-//	int begin = 1 + start, matched = 0;
-//	while (begin + matched < N) {
-//		if (s[begin + matched] == s[matched + start]) {
-//			matched++;
-//			pi[begin + matched - 1] = matched;
-//			if (matched > ret) ret = matched;
-//		}
-//		else {
-//			if (matched == 0)
-//				begin++;
-//			else {
-//				begin += matched + pi[matched - 1];
-//				matched = pi[matched];
-//			}
-//		}
-//	}
-//	return ret;
-//}
-//
-//
-//
-//
-//void suffixArray(const string &S) {
-//	int N = S.length();
-//	vector<int> pi(N, 0);
-//}
-//
-//void LCPArray(const string &S) {
-//	int N = S.length();
-//}
-//
-//int main() {
-//	string S;
-//	cin >> S;
-//
-//	vector<int> ret = getSuffixArrayNaive(S);
-//	for (int i = 0; i < ret.size(); i++) {
-//		cout << ret[i] + 1 << " ";
-//	}
-//	cout << "\nx ";
-//	for (int i = 1; i < ret.size(); i++) {
-//		cout << preKMP(S, ret[i]) << " ";
-//	}
-//
-//	return 0;
-//}
-
-
 #include<vector>
 #include<algorithm>
 #include<string>
 #include<iostream>
 
 using namespace std;
+
+int pos[500001];
 
 //각 접미사들의 첫 t글자를 기준으로 한 그룹 번호가 주어질 때,
 //주어진 두 접미사를 첫 2*t글자를 기준으로 비교한다.
@@ -127,7 +23,6 @@ struct Comparator {
 
 	}
 };
-
 
 
 ////코드 20.10 접미사 배열을 계산하는 맨버와 마이어스의 알고리즘
@@ -171,19 +66,6 @@ vector<int> getSuffixArray(const string& s) {
 	return perm;
 }
 
-////코드 20.11 접미사 배열을 사용해 원형 문자열 문제를 해결하는 알고리즘의 구현
-
-//사전순으로 가장 앞에 오는 s의 회전 결과를 구한다.
-string minShift(const string & s) {
-	string s2 = s + s;
-	vector<int> a = getSuffixArray(s2);
-	for (int i = 0; i < a.size(); i++)
-		if (a[i] <= s.size())
-			return s2.substr(a[i], s.size());
-	//여기로 올 일은 없어야 한다.
-	return "__oops__";
-}
-
 
 
 ////코드 20.12 접미사 배열을 이용해 다른 부분 문자열의 수를 세는 알고리즘
@@ -197,20 +79,31 @@ int commonPrefix(const string & s, int i, int j) {
 	return k;
 }
 
-//s의 서로 다른 부분 문자열의 수를 센다.
-int countSubstrings(const string & s) {
-	vector<int> a = getSuffixArray(s);
-	int ret = 0;
-	int n = s.size();
-	for (int i = 0; i < a.size(); i++) {
-		int cp = 0;
-		if (i > 0) cp = commonPrefix(s, a[i - 1], a[i]);
-		//a[i]의 (n-a[i])개의 접두사들 중에서 cp개는 중복이다.
-		ret += n - a[i] - cp;
+
+//계산의 반복을 줄이기 위해 구상을 해보자.
+//접두사의 길이를 비교할 때 매번 자기 아래의 수와 비교를 하는 방법이 존재한다.
+//하지만, 필요 없는 반복이 계속된다는 느낌이 든다.
+//이것은 KMP에서 pi배열과 비슷하게 계산을 줄일 수 있는 방법이 존재 할 것 같다.
+//결과적으로 
+vector<int> LCPArray(const string& S, const vector<int>& suffixArray) {
+	int N = S.size();
+	vector<int> ret(N, 0);
+	//길이가 긴 순서대로 비교를 할 것이다.
+	//이를 위해 순서대로 자신의 위치를 표시해주는
+	//pos[]배열을 만들어주었다.
+	for (int i = 0; i < N; i++)
+		pos[suffixArray[i]] = i;
+
+	for (int i = 0, k=0; i < N; i++, k=max(k-1, 0)) {
+		//suffixArray의 마지막은 비교가 불가능하다.
+		if (pos[i] == N - 1) continue;
+
+		//바로 아래의 접미사와 비교해서 몇 개의 글자가 일치하는지 비교한다.
+		for (int j = suffixArray[pos[i] + 1]; S[i + k] == S[j + k]; k++);
+		ret[pos[i]] = k;
 	}
 	return ret;
 }
-
 
 
 int main() {
@@ -218,32 +111,26 @@ int main() {
 	ios_base::sync_with_stdio(0);
 	cin.tie(0);
 
-	string input;
-	cin >> input;
-	vector<int> sol = getSuffixArray(input);
-
-	for (int i = 0; i < sol.size(); i++) {
-		cout << sol[i] + 1 << " ";
+	string temp;
+	cin >> temp;
+	vector<int> suffix = getSuffixArray(temp);
+	vector<int> LCP = LCPArray(temp, suffix);
+	int N = temp.size();
+	for (int i = 0; i < N; i++) {
+		cout << suffix[i]+1 << " ";
 	}
 	cout << "\nx ";
-	for (int i = 1; i < sol.size(); i++) {
-		int count = 0;
-		//음... 시간초과가 나는데, n^2의 구현이라 그런 듯 하다.
-		//이전에 이미 구한 데이터를 활용 할 구상을 해보자.
-		//pi[]를 활용하면 될 듯 한데.
-		//어떤식으로 활용해야 하려나.
-		//pi[i]의 크기만큼 뒤에 전부를 차감하면 가능하나?
-		//생각을 더 해보자.
-		while ((sol[i - 1] + count) < sol.size() && (sol[i] + count) < sol.size()) {
-			if (input[sol[i - 1] + count] == input[sol[i] + count])
-				count++;
-			else
-				break;
-		}
-		cout << count << " ";
-		
+	for (int i = 0; i < N-1; i++) {
+		cout << LCP[i] << " ";
 	}
 
 
 	return 0;
 }
+
+
+
+
+
+
+
