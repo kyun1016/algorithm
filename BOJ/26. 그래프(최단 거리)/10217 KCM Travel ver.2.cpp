@@ -2,8 +2,6 @@
 #include<vector>
 #include<queue>
 #include<algorithm>
-#include<cstring>
-
 
 using namespace std;
 
@@ -13,17 +11,11 @@ const int INF = 1000000007;
 int timeDelay[101][10001];
 
 void dijkstra(const int& N, const int& MAX_COST) {
-	//memset(timeDelay, -1, sizeof(timeDelay));
-
-	//혹시 처음에 INF로 설정이 가능한가?
-	for (int i = 0; i <= 100; i++) {
-		for (int j = 0; j <= 10000; j++)
+	for (int i = 0; i <= N; i++) {
+		for (int j = 0; j <= MAX_COST; j++)
 			timeDelay[i][j] = INF;
 	}
-	/*vector<int> dist(N + 1, INF);
-	dist[1] = 0;*/
 	timeDelay[1][0] = 0;
-	//처음은 time, second.first=cost, second.second 현재 위치
 	priority_queue<pair<int, pair<int, int> > > pq;
 	pq.push({ 0, {0, 1} });
 	while (!pq.empty()) {
@@ -41,37 +33,20 @@ void dijkstra(const int& N, const int& MAX_COST) {
 			//만일 최대 비용을 초과하는 가격이 나온다면, 패스한다.
 			if (nextCost > MAX_COST)
 				continue;
-
-			//if (timeDelay[there][nextCost] == -1) {
-			//	timeDelay[there][nextCost] = nextTime;
-			//	//cout << there << " " << nextCost << " " << nextTime << endl;
-			//	pq.push({ -nextCost, {nextTime, there} });
-			//}
-			//else 
+			//이 비용 위로 이 시간이 최소 시간이 되는지 확인하고, 미리 설정해준다.
+			//이유는, pq에 push를 최소로 하도록 만들어주고, 이미 들어간 값들의 무의미한 계산을 막아주기 위해서이다.
 			if (timeDelay[there][nextCost] > nextTime) {
 				for (int i = nextCost; i <= MAX_COST; i++) {
 					if (timeDelay[there][i] > nextTime)
 						timeDelay[there][i] = nextTime;
 				}
-				//cout << there << " "<< nextCost << " " << nextTime << endl;
 				pq.push({ -nextCost, {nextTime, there} });
 			}
-
-			/*if (nextCost > MAX_COST || dist[there] < nextTime)
-				continue;
-			else {
-				dist[there] = nextTime;
-				pq.push({ -nextCost, {nextTime, there} });
-			}*/
 		}
 	}
 	int ret = INF;
-	for (int i = 1; i <= MAX_COST; i++) {
-		if (timeDelay[N][i] == INF)
-			continue;
+	for (int i = 1; i <= MAX_COST; i++)
 		ret = min(ret, timeDelay[N][i]);
-		//cout << "cost : " << i << "   : " <<ret << endl;
-	}
 	if (ret == INF)
 		cout << "Poor KCM" << endl;
 	else
