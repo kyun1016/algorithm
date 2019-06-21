@@ -137,7 +137,7 @@
 //	{
 //		cin >> x >> y;
 //		int Max = 0;
-//		if (y - x >= 20000) {
+//		if (y - x >= 10000) {
 //			for (ull i = y - 20000; i <= y; i++) {
 //				Max = max(findHell(i), Max);
 //			}
