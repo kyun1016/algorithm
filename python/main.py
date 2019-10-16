@@ -7,7 +7,11 @@ from bs4 import BeautifulSoup
 import time
 import json
 
+<<<<<<< HEAD
 KAKAO_TOKEN = "12321312"
+=======
+KAKAO_TOKEN = "ENe5zsDGD-HLhIknZKmpWvmHA3Rd9AVHrTh6Qgo9dZwAAAFt1Q9ypw"
+>>>>>>> 8014b27f3c42fdc9575016c572b934e49074dc69
 send_lists = []
 
 
