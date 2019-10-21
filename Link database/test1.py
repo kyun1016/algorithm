@@ -19,7 +19,7 @@ import re
 # 현재 필요없는 부분
 def setApiUrl():
     # 내 apiKey
-    apiKey = "L7N%2BKcwG6vd3iw8aQ7LTzmxErO4N%2FuAqWhHW25Kx5rFa1648arnkkOFObqEbpD4VjelQgqAFgZuh6cemXTwjfQ%3D%3D"
+    apiKey = "myapi"
 
     # 공지사항 파라미터들
     numOfRows = str(10)
