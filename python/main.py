@@ -8,6 +8,10 @@ import time
 import json
 
 KAKAO_TOKEN = "12321312"
+<<<<<<< HEAD
+=======
+
+>>>>>>> cc45ad412efb80fe7ead1f4c4fc8d2585c1227c5
 send_lists = []
 
 
