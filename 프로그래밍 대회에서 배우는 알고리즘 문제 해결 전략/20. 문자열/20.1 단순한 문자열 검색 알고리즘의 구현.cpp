@@ -118,7 +118,7 @@
 //		while (matched > 0 && H[i] != N[matched])
 //			matched = pi[matched - 1];
 //		//글자가 대응될 경우
-//		if (H[i] == N[matched]) {
+//		if (H[i] == N[matched - 1]) {
 //			matched++;
 //			if (matched == m) {
 //				ret.push_back(i - m + 1);

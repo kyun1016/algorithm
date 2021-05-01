@@ -2,11 +2,6 @@
 //
 //using namespace std;
 //
-//
-//
-//
-//
-////22.3 트립의 노드를 표현하는 객체의 구현
 //typedef int KeyType;
 //
 //struct Node {

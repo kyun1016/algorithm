@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_menu_1"
+        android:title="내 위치 변경하기"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_menu_2"
+        android:title="좌표 제거하기"
+        app:showAsAction="never" />
+</menu>
